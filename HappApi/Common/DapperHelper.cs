@@ -11,7 +11,7 @@ using System.Net.Configuration;
 
         private DapperHelper()
         {
-            _cnnstr = "server=.;database=HappyTenement;uid=sa;pwd=111111";
+            _cnnstr = "Data Source=.;Initial Catalog=HappyTenement;Integrated Security=True";
 			// //_cnnstr= "server=localhost;port=; database=test;username=root;password=dinglinBAyue^;";//MySQL
         }
 

@@ -1,0 +1,7 @@
+F:\Work\GitHubRepository\MyRepository\HappApi\IDAL\bin\Debug\IDAL.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\IDAL\bin\Debug\IDAL.pdb
+F:\Work\GitHubRepository\MyRepository\HappApi\IDAL\bin\Debug\Model.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\IDAL\bin\Debug\Model.pdb
+F:\Work\GitHubRepository\MyRepository\HappApi\IDAL\obj\Debug\IDAL.csprojResolveAssemblyReference.cache
+F:\Work\GitHubRepository\MyRepository\HappApi\IDAL\obj\Debug\IDAL.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\IDAL\obj\Debug\IDAL.pdb

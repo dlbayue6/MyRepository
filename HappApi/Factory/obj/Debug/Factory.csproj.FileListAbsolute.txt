@@ -1,0 +1,5 @@
+F:\Work\GitHubRepository\MyRepository\HappApi\Factory\bin\Debug\Factory.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\Factory\bin\Debug\Factory.pdb
+F:\Work\GitHubRepository\MyRepository\HappApi\Factory\obj\Debug\Factory.csprojResolveAssemblyReference.cache
+F:\Work\GitHubRepository\MyRepository\HappApi\Factory\obj\Debug\Factory.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\Factory\obj\Debug\Factory.pdb

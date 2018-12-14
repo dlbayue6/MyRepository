@@ -1,0 +1,14 @@
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\obj\Debug\DAL.csprojResolveAssemblyReference.cache
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\DAL.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\DAL.pdb
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\Common.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\Dapper.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\IDAL.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\Model.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\Common.pdb
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\IDAL.pdb
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\Model.pdb
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\obj\Debug\DAL.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\obj\Debug\DAL.pdb
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\ServiceStack.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\DAL\bin\Debug\ServiceStack.Interfaces.dll
