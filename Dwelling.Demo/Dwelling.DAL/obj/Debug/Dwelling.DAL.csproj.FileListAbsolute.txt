@@ -1,9 +1,0 @@
-C:\Users\Lenovo\Desktop\蜗居微信小程序\Dwelling.Demo\Dwelling.DAL\bin\Debug\Dwelling.DAL.dll
-C:\Users\Lenovo\Desktop\蜗居微信小程序\Dwelling.Demo\Dwelling.DAL\bin\Debug\Dwelling.DAL.pdb
-C:\Users\Lenovo\Desktop\蜗居微信小程序\Dwelling.Demo\Dwelling.DAL\obj\Debug\Dwelling.DAL.csprojAssemblyReference.cache
-C:\Users\Lenovo\Desktop\蜗居微信小程序\Dwelling.Demo\Dwelling.DAL\obj\Debug\Dwelling.DAL.csproj.CoreCompileInputs.cache
-C:\Users\Lenovo\Desktop\蜗居微信小程序\Dwelling.Demo\Dwelling.DAL\obj\Debug\Dwelling.DAL.dll
-C:\Users\Lenovo\Desktop\蜗居微信小程序\Dwelling.Demo\Dwelling.DAL\obj\Debug\Dwelling.DAL.pdb
-C:\Users\Lenovo\Desktop\蜗居微信小程序\Dwelling.Demo\Dwelling.DAL\bin\Debug\Dwelling.IDAL.dll
-C:\Users\Lenovo\Desktop\蜗居微信小程序\Dwelling.Demo\Dwelling.DAL\bin\Debug\Dwelling.IDAL.pdb
-C:\Users\Lenovo\Desktop\蜗居微信小程序\Dwelling.Demo\Dwelling.DAL\obj\Debug\Dwelling.DAL.csproj.CopyComplete
