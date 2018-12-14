@@ -46,7 +46,7 @@ namespace HappApi.Controllers
             return list;
         }
 
-        [HttpGet]
+        [AcceptVerbs("GET","POST")]
         public List<House> SelectHouseList(string houseRentMoney,string habitableRoom_ID,string house_Address)
         {
             List<House> list = houseDAL.SelectData();
