@@ -1,8 +1,8 @@
 F:\Work\GitHubRepository\MyRepository\HappApi\Common\bin\Debug\Common.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\Common\bin\Debug\Common.pdb
-F:\Work\GitHubRepository\MyRepository\HappApi\Common\obj\Debug\Common.dll
-F:\Work\GitHubRepository\MyRepository\HappApi\Common\obj\Debug\Common.pdb
 F:\Work\GitHubRepository\MyRepository\HappApi\Common\bin\Debug\ServiceStack.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\Common\bin\Debug\ServiceStack.Interfaces.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\Common\bin\Debug\ServiceStack.ServiceInterface.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache
+F:\Work\GitHubRepository\MyRepository\HappApi\Common\obj\Debug\Common.dll
+F:\Work\GitHubRepository\MyRepository\HappApi\Common\obj\Debug\Common.pdb

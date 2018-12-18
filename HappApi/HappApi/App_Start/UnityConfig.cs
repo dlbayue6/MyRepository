@@ -45,6 +45,8 @@ namespace HappApi
             // TODO: Register your type's mappings here.
             // container.RegisterType<IProductRepository, ProductRepository>();
             container.RegisterType<IHouseDAL, HouseDAL>();
+            container.RegisterType<IConcern, ConcernDAL>();
+            container.RegisterType<IClientInfo, ClientInfoDAL>();
         }
     }
 }
