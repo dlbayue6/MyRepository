@@ -2,3 +2,4 @@ F:\Work\GitHubRepository\MyRepository\HappApi\Model\bin\Debug\Model.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\Model\bin\Debug\Model.pdb
 F:\Work\GitHubRepository\MyRepository\HappApi\Model\obj\Debug\Model.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\Model\obj\Debug\Model.pdb
+F:\Work\GitHubRepository\MyRepository\HappApi\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache

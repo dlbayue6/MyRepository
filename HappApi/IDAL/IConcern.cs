@@ -11,7 +11,7 @@ namespace IDAL
     {
         List<Concern> SelectData();
         int AddData(Concern model);
-        int DelData(Concern model);
+        int DelData(int id);
         int UpData(int id);
     }
 }

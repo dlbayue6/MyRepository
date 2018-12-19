@@ -23,9 +23,14 @@ namespace DAL
             }
         }
 
-        public int DelData(Concern model)
+        public int DelData(int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection conn = DapperHelper.Instance().GetConnection())
+            {
+                string sql = string.Format("delete from Concern where HouseId=@houseId");
+                int result = conn.Execute(sql, new { houseId=id });
+                return result;
+            }
         }
 
         public List<Concern> SelectData()

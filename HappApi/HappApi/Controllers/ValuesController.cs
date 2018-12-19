@@ -142,5 +142,16 @@ namespace HappApi.Controllers
             return houseList;
 
         }
+        /// <summary>
+        /// 取消关注
+        /// </summary>
+        /// <param name="houseId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public int cancelConcern(int houseId)
+        {
+            int i = concernDAL.DelData(houseId);
+            return i;
+        }
     }
 }
