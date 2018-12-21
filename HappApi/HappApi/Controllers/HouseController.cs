@@ -10,12 +10,31 @@ using System.Web.Http;
 
 namespace HappApi.Controllers
 {
+    using System.Data.SqlClient;
     using System.Web;
     using Unity.Attributes;
+    using Dapper;
     public class HouseController : ApiController
     {
         [Dependency]
         public IHouseDAL houseDAL { get; set; }
+        [Dependency]
+        public IApprovalAction approvalActionDAL { get; set; }
+        /// <summary>
+        /// 发布房源
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="HabitableRoom"></param>
+        /// <param name="House_Area"></param>
+        /// <param name="House_Address"></param>
+        /// <param name="HouseLocation"></param>
+        /// <param name="HouseFacility"></param>
+        /// <param name="House_OwnerTel"></param>
+        /// <param name="House_RentMoney"></param>
+        /// <param name="ImageUrls"></param>
+        /// <param name="ExteriorImage"></param>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
         [HttpGet]
         public int AddHouse(string UserId, string HabitableRoom, float House_Area, string House_Address, string HouseLocation, string HouseFacility, string House_OwnerTel, decimal House_RentMoney, string ImageUrls, string ExteriorImage, int roleId)
         {
@@ -36,7 +55,7 @@ namespace HappApi.Controllers
                 house.ExteriorImage = ExteriorImage;
 
                 int i = houseDAL.AddData(house);
-                if (i==1)
+                if (i == 1)
                 {
                     return 1;
                 }
@@ -44,7 +63,7 @@ namespace HappApi.Controllers
                 {
                     return 0;
                 }
-               
+
             }
             else
             {
@@ -65,6 +84,8 @@ namespace HappApi.Controllers
                 int i = houseDAL.AddData(house);
                 if (i == 1)
                 {
+                    House modelHouse = houseDAL.SelectData().Where(m => m.UserId == UserId && m.ApprovalState == 0).FirstOrDefault();
+                    AddApprovalAction(1, modelHouse.Id);
                     return 2;
                 }
                 else
@@ -72,7 +93,7 @@ namespace HappApi.Controllers
                     return 0;
                 }
             }
-            
+
         }
 
         [HttpPost]
@@ -90,9 +111,9 @@ namespace HappApi.Controllers
 
                 //文件名
                 // string fileName = DateTime.Now.ToString("yyyyMMddHHmmssffff") + System.Guid.NewGuid().ToString("N") + extensionName;
-                string fileName = DateTime.Now.ToString("yyyyMMdd")+ System.Guid.NewGuid().ToString("N").Substring(20) + extensionName;
+                string fileName = DateTime.Now.ToString("yyyyMMdd") + System.Guid.NewGuid().ToString("N").Substring(20) + extensionName;
                 //保存文件路径(可以把用户id、用户昵称之类的传过来，作为文件夹进行存储)
-                string filePathName = HttpContext.Current.Request.MapPath("/Images/") ;
+                string filePathName = HttpContext.Current.Request.MapPath("/Images/");
                 if (!System.IO.Directory.Exists(filePathName))
                 {
                     System.IO.Directory.CreateDirectory(filePathName);
@@ -103,9 +124,135 @@ namespace HappApi.Controllers
 
                 //file.SaveAs(System.IO.Path.Combine(filePathName, fileName));
 
-                return "/Images/"+ fileName;
+                return "/Images/" + fileName;
             }
             return "";
         }
+
+        int stepIndex = 0;
+        int stepOrder = 1;
+        int approvalState = 0;
+        /// <summary>
+        /// 添加审批任务
+        /// </summary>
+        /// <param name="workId"></param>
+        /// <param name="dataId"></param>
+        /// <returns></returns>
+        private int AddApprovalAction(int workId, int dataId)
+        {
+            using (SqlConnection conn = DapperHelper.Instance().GetConnection())
+            {
+                //获取节点ids
+                string sql = "select StepIds from ApprovalStep where WorkId=" + workId;
+                string stepIds = conn.Query<string>(sql).ToString();
+                Array stepIdArray = stepIds.Split(',');//数组集合
+
+
+                //获取审批角色id
+                var nowstepId = (int)stepIdArray.GetValue(0, stepIndex); //获取节点id
+                string sql2 = "RoleId RoleId from Step where Id=" + nowstepId;
+                int nowroleId = (int)conn.Query<int>(sql2).ToArray().GetValue(0, 0);
+
+                //获取下一审批角色id
+                int nextroleId = 0;
+                if (stepIdArray.GetValue(0, stepIndex + 1) != null)
+                {
+                    var nextstepId = (int)stepIdArray.GetValue(0, stepIndex + 1); //获取下一节点id
+                    string sql3 = "RoleId RoleId from Step where Id=" + nextstepId;
+                    nextroleId = int.Parse(conn.Query(sql3).ToString());
+                }
+
+                //初始化审批状态
+                approvalState = stepIdArray.Length + 1;
+
+                ApprovalAction approvalAction = new Model.ApprovalAction();
+                approvalAction.WorkId = workId;
+                approvalAction.StepIds = stepIds;
+                approvalAction.StepIndex = stepIndex;
+                approvalAction.StepOrder = stepOrder;
+                approvalAction.ApprovalState = approvalState;
+                approvalAction.NowApprover = nowroleId;
+                approvalAction.NextApprover = nextroleId;
+                approvalAction.ApplicationId = dataId;
+
+                int i = approvalActionDAL.AddData(approvalAction);
+
+                return i;
+
+            }
+
+
+        }
+        /// <summary>
+        /// 进行审批
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public int ApprovalAction(int id)
+        {
+            ApprovalAction model = approvalActionDAL.SelectData().Where(m => m.Id == id).FirstOrDefault();
+            if (model.ApprovalState != 1)
+            {
+                stepIndex++;
+                stepOrder++;
+                approvalState--;
+
+                using (SqlConnection conn = DapperHelper.Instance().GetConnection())
+                {
+                    //获取节点ids
+
+                    Array stepIdArray = model.StepIds.Split(',');//数组集合
+
+
+                    //获取审批角色id
+
+                    int nowroleId = model.NextApprover;
+
+                    //获取下一审批角色id
+                    int nextroleId = 0;
+                    if (stepIdArray.GetValue(0, stepIndex) != null)
+                    {
+                        var nextstepId = (int)stepIdArray.GetValue(0, stepIndex); //获取下一节点id
+                        string sql3 = "RoleId RoleId from Step where Id=" + nextstepId;
+                        nextroleId = int.Parse(conn.Query(sql3).ToString());
+                    }
+
+
+                    ApprovalAction approvalAction = new Model.ApprovalAction();
+                    approvalAction.Id = id;
+
+
+                    approvalAction.StepIndex = stepIndex;
+                    approvalAction.StepOrder = stepOrder;
+                    approvalAction.ApprovalState = approvalState;
+                    approvalAction.NowApprover = nowroleId;
+                    approvalAction.NextApprover = nextroleId;
+
+                    int i = approvalActionDAL.UpData(approvalAction);
+                    return i;
+                }
+            }
+            else
+            {
+                stepIndex = 0;
+                stepOrder = 1;
+                approvalState = 0;
+                return 2;
+            }
+        }
+
+        /// <summary>
+        /// 根据角色获取审批任务
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public List<ApprovalAction> GetApprovalActionList(int roleId)
+        {
+            List<ApprovalAction> list = approvalActionDAL.SelectData().Where(m => m.ApprovalState != 1 && m.NowApprover == roleId).ToList();
+            return list;
+        }
+
     }
 }

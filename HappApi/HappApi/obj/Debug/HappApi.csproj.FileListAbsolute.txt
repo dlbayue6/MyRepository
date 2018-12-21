@@ -36,7 +36,6 @@ F:\Work\GitHubRepository\MyRepository\HappApi\HappApi\bin\Microsoft.Owin.Securit
 F:\Work\GitHubRepository\MyRepository\HappApi\HappApi\bin\Microsoft.Web.Infrastructure.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\HappApi\bin\Model.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\HappApi\bin\Newtonsoft.Json.dll
-F:\Work\GitHubRepository\MyRepository\HappApi\HappApi\bin\NLog.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\HappApi\bin\Owin.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\HappApi\bin\System.Net.Http.Formatting.dll
 F:\Work\GitHubRepository\MyRepository\HappApi\HappApi\bin\System.Web.Helpers.dll

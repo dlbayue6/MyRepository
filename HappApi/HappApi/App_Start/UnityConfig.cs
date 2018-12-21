@@ -47,6 +47,7 @@ namespace HappApi
             container.RegisterType<IHouseDAL, HouseDAL>();
             container.RegisterType<IConcern, ConcernDAL>();
             container.RegisterType<IClientInfo, ClientInfoDAL>();
+            container.RegisterType<IApprovalAction, ApprovalActionDAL>();
         }
     }
 }

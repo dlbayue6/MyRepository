@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IApprovalAction.cs" />
     <Compile Include="IClientInfo.cs" />
     <Compile Include="IConcern.cs" />
     <Compile Include="IHouseDAL.cs" />
