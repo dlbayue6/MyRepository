@@ -12,15 +12,15 @@ namespace Model
         /// <summary>
         /// 申请/发布人
         /// </summary>
-        public int UserId { get; set; }
+        public string  UserId { get; set; }
         /// <summary>
         /// 发布时间
         /// </summary>
         public DateTime PublishTime { get; set; }
         /// <summary>
-        /// 居室户型id
+        /// 居室户型
         /// </summary>
-        public int HabitableRoom_ID { get; set; }
+        public string  HabitableRoom { get; set; }
         /// <summary>
         /// 面积
         /// </summary>
@@ -34,9 +34,9 @@ namespace Model
         /// </summary>
         public string HouseLocation { get; set; }
         /// <summary>
-        /// 房屋设施id
+        /// 房屋设施
         /// </summary>
-        public int HouseFacilityId { get; set; }
+        public string  HouseFacility { get; set; }
         /// <summary>
         /// 房源所属人电话
         /// </summary>

@@ -15,7 +15,12 @@ namespace DAL
     {
         public int AddData(House model)
         {
-            throw new NotImplementedException();
+            using (SqlConnection conn = DapperHelper.Instance().GetConnection())
+            {
+                string sql = string.Format("insert into House values(@UserId,getdate(),@HabitableRoom,@House_Area,@House_Address,@HouseLocation,@HouseFacility,@House_OwnerTel,@House_RentMoney,@ApprovalState,0,0,@ImageUrls,@ExteriorImage)");
+                int result = conn.Execute(sql, model);
+                return result;
+            }
         }
 
         public int DelData(House model)

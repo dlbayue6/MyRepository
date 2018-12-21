@@ -8,8 +8,11 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
+
 namespace HappApi.Controllers
 {
+    //using System.Web.Mvc;
+    using System.Web;
     using Unity.Attributes;
     // [Authorize]
     public class ValuesController : ApiController
@@ -53,10 +56,14 @@ namespace HappApi.Controllers
             RedisHelper.Set<ClientInfo>(clientinfo.session_key, clientinfo, DateTime.Now.AddMinutes(10));
             return clientinfo;
         }
+        /// <summary>
+        /// 所有房源
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public List<House> HouseList()
+        public Array SelectHouses()
         {
-            List<House> list = houseDAL.SelectData();
+            Array list = houseDAL.SelectData().Where(m=>m.ApprovalState==1).ToArray();
             return list;
         }
 
@@ -70,10 +77,10 @@ namespace HappApi.Controllers
         /// <returns></returns>
         [HttpGet]
 
-        public object SelectHouseList(decimal houseRentMoney, int habitableRoom_ID, string houseLocation, int houseId)
+        public object SelectHouseList(decimal houseRentMoney, string  habitableRoom, string houseLocation, int houseId)
         {
             //目标房源
-            List<House> list = houseDAL.SelectData().Where(m => string.Concat(m.HouseLocation, m.House_Address).Contains(houseLocation) && m.HabitableRoom_ID == habitableRoom_ID && (houseRentMoney - 500) <= m.House_RentMoney && m.House_RentMoney <= (houseRentMoney + 500) && m.ApprovalState == 1 && m.RentState == false).ToList();
+            List<House> list = houseDAL.SelectData().Where(m => string.Concat(m.HouseLocation, m.House_Address).Contains(houseLocation) && m.HabitableRoom.Trim() == habitableRoom.Trim() && (houseRentMoney - 500) <= m.House_RentMoney && m.House_RentMoney <= (houseRentMoney + 500) && m.ApprovalState == 1 && m.RentState == false).ToList();
             House house1 = list.Where(m => m.RecommendState == true).FirstOrDefault();//推荐住房
             House house2 = list.Where(m => m.RecommendState == false).OrderBy(m => m.House_RentMoney).FirstOrDefault();//无推荐时，显示租金最低的
             House house3 = houseDAL.SelectData().Where(m => m.Id == houseId).FirstOrDefault();//目标房源查看详情时，所选房子
@@ -153,5 +160,18 @@ namespace HappApi.Controllers
             int i = concernDAL.DelData(houseId);
             return i;
         }
+        /// <summary>
+        /// 获取我发布的房源
+        /// </summary>
+        /// <param name="userOpenId2"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public Array SelectMyHouses(string  userOpenId2)
+        {
+            Array myHouse = houseDAL.SelectData().Where(m=>m.UserId== userOpenId2&&m.ApprovalState==1).ToArray();
+            return myHouse;
+        }
+
+     
     }
 }
