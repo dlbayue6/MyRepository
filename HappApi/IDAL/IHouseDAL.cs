@@ -12,6 +12,6 @@ namespace IDAL
         List<House> SelectData();
         int AddData(House model);
         int DelData(House model);
-        int UpData(int id);
+        int UpData(House model);
     }
 }

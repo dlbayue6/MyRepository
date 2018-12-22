@@ -78,13 +78,13 @@ namespace HappApi.Controllers
                 house.House_RentMoney = House_RentMoney;
                 house.ApprovalState = 0;
 
-                house.ImageUrls = ImageUrls.Trim('"').TrimEnd(',');
-                house.ExteriorImage = ExteriorImage.Trim('"');
+                house.ImageUrls = ImageUrls.TrimEnd(',');
+                house.ExteriorImage = ExteriorImage;
 
                 int i = houseDAL.AddData(house);
                 if (i == 1)
                 {
-                    House modelHouse = houseDAL.SelectData().Where(m => m.UserId == UserId && m.ApprovalState == 0).FirstOrDefault();
+                    House modelHouse = houseDAL.SelectData().Where(m => m.UserId == UserId && m.ApprovalState == 0).OrderByDescending(m=>m.Id).FirstOrDefault();
                     AddApprovalAction(1, modelHouse.Id);
                     return 2;
                 }
@@ -144,30 +144,29 @@ namespace HappApi.Controllers
             {
                 //获取节点ids
                 string sql = "select StepIds from ApprovalStep where WorkId=" + workId;
-                string stepIds = conn.Query<string>(sql).ToString();
-                Array stepIdArray = stepIds.Split(',');//数组集合
-
-
+                var stepIds = conn.Query<string>(sql).ToArray();//查询出来的是集合，需转成数组取出其中的值
+      
                 //获取审批角色id
-                var nowstepId = (int)stepIdArray.GetValue(0, stepIndex); //获取节点id
-                string sql2 = "RoleId RoleId from Step where Id=" + nowstepId;
-                int nowroleId = (int)conn.Query<int>(sql2).ToArray().GetValue(0, 0);
+                var ids = stepIds[0].Split(',');
+                var nowstepId =ids[stepIndex]; //获取节点id
+                string sql2 = "select RoleId from Step where Id=" + nowstepId;
+                int nowroleId = conn.Query<int>(sql2).ToArray()[0];
 
                 //获取下一审批角色id
                 int nextroleId = 0;
-                if (stepIdArray.GetValue(0, stepIndex + 1) != null)
+                if (ids.Length >= stepIndex + 2)
                 {
-                    var nextstepId = (int)stepIdArray.GetValue(0, stepIndex + 1); //获取下一节点id
-                    string sql3 = "RoleId RoleId from Step where Id=" + nextstepId;
-                    nextroleId = int.Parse(conn.Query(sql3).ToString());
+                    var nextstepId = ids[stepIndex+1]; //获取下一节点id
+                    string sql3 = "select RoleId from Step where Id=" + nextstepId;
+                    nextroleId = conn.Query<int>(sql3).ToArray()[0];
                 }
 
                 //初始化审批状态
-                approvalState = stepIdArray.Length + 1;
+                approvalState = stepIds.Length + 1;
 
                 ApprovalAction approvalAction = new Model.ApprovalAction();
                 approvalAction.WorkId = workId;
-                approvalAction.StepIds = stepIds;
+                approvalAction.StepIds = stepIds[0];
                 approvalAction.StepIndex = stepIndex;
                 approvalAction.StepOrder = stepOrder;
                 approvalAction.ApprovalState = approvalState;
@@ -194,30 +193,14 @@ namespace HappApi.Controllers
             ApprovalAction model = approvalActionDAL.SelectData().Where(m => m.Id == id).FirstOrDefault();
             if (model.ApprovalState != 1)
             {
-                stepIndex++;
-                stepOrder++;
-                approvalState--;
+                
+                //approvalState--;
 
                 using (SqlConnection conn = DapperHelper.Instance().GetConnection())
                 {
                     //获取节点ids
 
-                    Array stepIdArray = model.StepIds.Split(',');//数组集合
-
-
-                    //获取审批角色id
-
-                    int nowroleId = model.NextApprover;
-
-                    //获取下一审批角色id
-                    int nextroleId = 0;
-                    if (stepIdArray.GetValue(0, stepIndex) != null)
-                    {
-                        var nextstepId = (int)stepIdArray.GetValue(0, stepIndex); //获取下一节点id
-                        string sql3 = "RoleId RoleId from Step where Id=" + nextstepId;
-                        nextroleId = int.Parse(conn.Query(sql3).ToString());
-                    }
-
+                    var  stepIdArray = model.StepIds.Split(',');//数组集合
 
                     ApprovalAction approvalAction = new Model.ApprovalAction();
                     approvalAction.Id = id;
@@ -225,11 +208,41 @@ namespace HappApi.Controllers
 
                     approvalAction.StepIndex = stepIndex;
                     approvalAction.StepOrder = stepOrder;
-                    approvalAction.ApprovalState = approvalState;
-                    approvalAction.NowApprover = nowroleId;
-                    approvalAction.NextApprover = nextroleId;
-
+                    approvalAction.ApprovalState = model.ApprovalState-1;
+                  //判断是否存在下一审批角色
+                    if (model.NextApprover != 0)
+                    {
+                        //获取审批角色id
+                        int nowroleId = model.NextApprover;
+                        approvalAction.NowApprover = nowroleId;
+                        //获取下一审批角色id
+                        int nextroleId = 0;
+                        if (stepIdArray.Length >= stepIndex + 2)
+                        {
+                            var nextstepId = stepIdArray[stepIndex+1]; //获取下一节点id
+                            string sql3 = "RoleId RoleId from Step where Id=" + nextstepId;
+                            nextroleId = conn.Query<int>(sql3).ToArray()[0];
+                            approvalAction.NextApprover = nextroleId;
+                        }
+                    }
+                    else
+                    {
+                        // 后面修改需要
+                        approvalAction.NowApprover = model.NowApprover;
+                        approvalAction.NextApprover = model.NextApprover;
+                    }               
+                  
                     int i = approvalActionDAL.UpData(approvalAction);
+                    if (i==1)
+                    {
+                        //修改房屋审批状态
+                        House hous = houseDAL.SelectData().Where(m => m.Id == model.ApplicationId).FirstOrDefault();
+                        hous.ApprovalState = 1;
+                        int j= houseDAL.UpData(hous);
+                        stepIndex++;
+                        stepOrder++;
+                    }
+                  
                     return i;
                 }
             }
@@ -242,17 +255,7 @@ namespace HappApi.Controllers
             }
         }
 
-        /// <summary>
-        /// 根据角色获取审批任务
-        /// </summary>
-        /// <param name="roleId"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public List<ApprovalAction> GetApprovalActionList(int roleId)
-        {
-            List<ApprovalAction> list = approvalActionDAL.SelectData().Where(m => m.ApprovalState != 1 && m.NowApprover == roleId).ToList();
-            return list;
-        }
+        
 
     }
 }

@@ -39,9 +39,14 @@ namespace DAL
            
         }
 
-        public int UpData(int id)
+        public int UpData(House model)
         {
-            throw new NotImplementedException();
+            using (SqlConnection conn = DapperHelper.Instance().GetConnection())
+            {
+                string sql = string.Format("update  House set UserId=@UserId,PublishTime=getdate(),HabitableRoom=@HabitableRoom,House_Area=@House_Area,House_Address=@House_Address,HouseLocation=@HouseLocation,HouseFacility=@HouseFacility,House_OwnerTel=@House_OwnerTel,House_RentMoney=@House_RentMoney,ApprovalState=@ApprovalState,RecommendState=@RecommendState,RentState=@RentState,ImageUrls=@ImageUrls,ExteriorImage=@ExteriorImage where Id=@Id");
+                int result = conn.Execute(sql, model);
+                return result;
+            }
         }
     }
 }

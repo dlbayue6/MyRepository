@@ -41,7 +41,7 @@ namespace DAL
         {
             using (SqlConnection conn = DapperHelper.Instance().GetConnection())
             {
-                string sql = string.Format("updata  ApprovalAction set @StepIndex,@StepOrder,@ApprovalState,@NowApprover,@NextApprover whwer Id=@Id");
+                string sql = string.Format("update  ApprovalAction set StepIndex=@StepIndex,StepOrder=@StepOrder,ApprovalState=@ApprovalState,NowApprover=@NowApprover,NextApprover=@NextApprover where Id=@Id");
                 int result = conn.Execute(sql, model);
                 return result;
             }
