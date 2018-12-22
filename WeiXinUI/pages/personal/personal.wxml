@@ -1,0 +1,165 @@
+<view class='topTabSwiper' wx:if="{{true}}">
+
+<view class='tab {{currentData == 0 ? "tabBorer" : ""}}' data-current = "0" bindtap='checkCurrent' wx:if="{{dataType == 1}}">我的收藏</view>
+<view class='tab {{currentData == 5 ? "tabBorer" : ""}}' data-current = "5" bindtap='checkCurrent' wx:elif="{{dataType == 2}}">房源管理</view>
+<view class='tab {{currentData == 5 ? "tabBorer" : ""}}' data-current = "5" bindtap='checkCurrent' wx:elif="{{dataType == 3}}">房源管理</view>
+<view class='tab {{currentData == 10 ? "tabBorer" : ""}}' data-current = "10" bindtap='checkCurrent' wx:else="{{dataType == 4}}">审批申请</view>
+
+<view  class='tab {{currentData == 1 ? "tabBorer" : ""}}' data-current = "1" bindtap='checkCurrent' wx:if="{{dataType == 1}}" >我的房源</view>
+<view class='tab {{currentData == 4 ? "tabBorer" : ""}}' data-current = "4" bindtap='checkCurrent' wx:elif="{{dataType == 2}}">审批房源发布</view>
+<view class='tab {{currentData == 7 ? "tabBorer" : ""}}' data-current = "7" bindtap='checkCurrent' wx:elif="{{dataType == 3}}">审批管理申请</view>
+<view class='tab {{currentData == 9 ? "tabBorer" : ""}}' data-current = "9" bindtap='checkCurrent'  wx:else="{{dataType == 4}}">管理管理员</view>
+
+<view class='tab {{currentData == 2 ? "tabBorer" : ""}}' data-current = "2" bindtap='checkCurrent' wx:if="{{dataType == 1}}" >申请管理员</view>
+<view class='tab {{currentData == 3 ? "tabBorer" : ""}}' data-current = "3" bindtap='checkCurrent' wx:elif="{{dataType == 2}}">申请高管</view>
+<view class='tab {{currentData == 6 ? "tabBorer" : ""}}' data-current = "6" bindtap='checkCurrent' wx:elif="{{dataType == 3}}">申请禁/启账号</view>
+<view class='tab {{currentData == 8 ? "tabBorer" : ""}}' data-current = "8" bindtap='checkCurrent'  wx:else="{{dataType == 4}}">管理用户</view>
+
+</view>
+
+<swiper current="{{currentData}}" class='swiper' style="height:600px;" duration="300" bindchange="bindchange">
+<!--我的收藏 -->
+<swiper-item>
+  <view class="ws_lineList" wx:if="{{houseList.length > 0}}">
+	<view class="ws_listBox" wx:for="{{houseList}}" wx:key="item.id">
+		<image src="http://localhost:8113{{item.ExteriorImage}}"/>
+		<view class="ws_listInfo">
+			<text class="h2">{{item.HouseLocation}}</text>
+			<text class="p">{{item.House_Address}}</text>
+			<navigator hover-class="none" url="/pages/houseDetails/houseDetails?id={{item.Id}}">查看详情</navigator>
+      
+      <text class="prompt1" wx:if="{{item.RentState==0}}">可租</text>
+      <text class="prompt2" wx:elif="{{item.RentState==1}}">已出租</text>
+      <text class="prompt2" wx:else>已撤销</text>
+      <button id="{{item.Id}}" class="delbutton" bindtap='cancelConcern'>取消关注</button>
+      
+      <input></input>
+		</view>
+	</view>
+ </view>
+   <view class="listNone" wx:if="{{shopList.length == 0}}">
+    <text>您当前的城市未开通线下体验店</text>
+    <button bindtap="getAll">查看全部体验店</button>
+  </view>
+
+</swiper-item>
+<!--我的房源 -->
+<swiper-item>
+ <view class="container2">
+	<view class="search-flex {{scrolltop>200?'tophide':''}}">
+		<view class="search-bar">
+			<input type="text" maxlength="12" placeholder="请输入关键字查询" bindinput="inputSearch"></input>
+			<button class="search-btn" bindtap="submitSearch" wx:if="{{showsearch}}">搜索</button>
+		</view>
+		<button class="search-extra-btn"  bindtap="Publish">发布房源</button>
+	</view>
+
+	<scroll-view class="container2-body" scroll-y="true" scroll-top="{{scrolltop}}" bindscroll="scrollHandle" lower-threshold="50" bindscrolltolower="scrollLoading">
+		<view class="service-list">
+			<navigator class="service-item" wx:for="{{servicelist}}" wx:key="{{item.id}}" url="/pages/houseDetails/houseDetails?id={{item.Id}}">
+				<view class="service-img">
+					<image src="http://localhost:8113{{item.ExteriorImage}}" mode="aspectFill"></image>
+				</view>
+				<view class="service-text">
+					<view class="service-tite">{{item.House_Address}}</view>
+					<view class="service-tags">
+						<text>{{item.House_RentMoney}}元/月</text>
+					</view>
+					<text class="service-city">地段:{{item.HouseLocation}}</text>
+				</view>
+			</navigator>
+		</view>
+		<view class="gototop {{scrolltop>200?'active':''}}" bindtap="goToTop"></view>
+	</scroll-view>
+ </view>
+</swiper-item>
+<!-- 申请管理员  -->
+ <swiper-item>
+ <view class='swiper_con'>这是个关注页面</view>
+ </swiper-item>
+
+<!-- 申请高管  -->
+ <swiper-item>
+ <view class='swiper_con'>这是个关注页面</view>
+ </swiper-item>
+
+<!-- 审批房源发布  -->
+ <swiper-item>
+  <view class="ws_lineList" wx:if="{{applicationList.length > 0}}">
+	<view class="ws_listBox" wx:for="{{applicationList}}" wx:key="item.id">
+		<image src="/images/0000.jpg" />
+		<view class="ws_listInfo">
+			<text class="h2">{{item.WorkId}}</text>
+			<text class="p">{{item.NowApprover}}</text>
+			<navigator hover-class="none" url="/pages/houseDetails/houseDetails?id={{item.Id}}">查看详情</navigator>
+
+      <text class="prompt1" wx:if="{{item.ApprovalState==1}}">已审批</text>
+      <text class="prompt2" wx:elif="{{item.ApprovalState!=1}}">待审批</text>
+      <text class="prompt2" wx:else>已撤销</text>
+      <button id="{{item.Id}}" class="delbutton" bindtap='approvalAction'>审批</button>
+      
+      <input></input>
+		</view>
+	</view>
+ </view>
+   <view class="listNone" wx:if="{{shopList.length == 0}}">
+    <text>您当前的城市未开通线下体验店</text>
+    <button bindtap="getAll">查看全部体验店</button>
+  </view>
+
+</swiper-item>
+
+<!-- 房源管理  -->
+<swiper-item >
+ <view class="container2">
+	<view class="search-flex {{scrolltop>200?'tophide':''}}">
+		<view class="search-bar">
+			<input type="text" maxlength="12" placeholder="请输入关键字查询" bindinput="inputSearch"></input>
+			<button class="search-btn" bindtap="submitSearch" wx:if="{{showsearch}}">搜索</button>
+		</view>
+		<button class="search-extra-btn"  bindtap="Publish">发布房源</button>
+	</view>
+
+	<scroll-view class="container2-body" scroll-y="true" scroll-top="{{scrolltop}}" bindscroll="scrollHandle" lower-threshold="50" bindscrolltolower="scrollLoading">
+		<view class="service-list">
+			<navigator class="service-item" wx:for="{{servicelistall}}" wx:key="{{item.id}}" url="/pages/houseDetails/houseDetails?id={{item.Id}}">
+				<view class="service-img">
+					<image src="http://localhost:8113{{item.ExteriorImage}}" mode="aspectFill"></image>
+				</view>
+				<view class="service-text">
+					<view class="service-tite">{{item.House_Address}}</view>
+					<view class="service-tags">
+						<text>{{item.House_RentMoney}}元/月</text>
+					</view>
+					<text class="service-city">地段:{{item.HouseLocation}}</text>
+				</view>
+			</navigator>
+		</view>
+		<view class="gototop {{scrolltop>10?'active':''}}" bindtap="goToTop">Top</view>
+	</scroll-view>
+ </view>
+
+</swiper-item>
+<!-- 申请禁/启账号  -->
+  <swiper-item>
+ <view class='swiper_con'>这是个关注页面</view>
+ </swiper-item>
+<!-- 审批管理申请  -->
+ <swiper-item>
+ <view class='swiper_con'>这是个关注页面</view>
+ </swiper-item>
+<!-- 管理用户  -->
+ <swiper-item>
+ <view class='swiper_con'>这是个关注页面</view>
+ </swiper-item>
+<!-- 管理管理员  -->
+ <swiper-item>
+ <view class='swiper_con'>这是个关注页面</view>
+ </swiper-item>
+<!-- 审批申请  -->
+ <swiper-item>
+ <view class='swiper_con'>这是个关注页面</view>
+ </swiper-item>
+ <swiper-item><view class='swiper_con'>这是个关注页面</view></swiper-item>
+
+</swiper>

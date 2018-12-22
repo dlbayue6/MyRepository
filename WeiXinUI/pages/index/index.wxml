@@ -1,0 +1,79 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+  <view class="usermotto">
+    <text class="user-motto">{{motto}}</text>
+    <button class="myBtn" bindtap="toShowModal">快速找美房</button>
+    <button class="myBtn" bindtap="toShowModalRole">个人中心</button>
+  </view>
+</view>
+
+<!--custom Modal模态窗-->
+<view class="modal-mask" bindtap="hideModal" wx:if="{{showModal}}">
+
+  <image class="bomImg" src="{{imgbx.bomImg}}"></image>
+</view>
+<view wx:if="{{showModal}}">
+
+  <view class='modal-photo'>
+    <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+     <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+  </view>
+
+  <view class="modal-content">
+
+    <view class="tips">
+        <text>说出你的要求，小仙帮你找美房~</text>
+    </view>
+
+    <image class="titImg" src="{{imgbx.titImg}}"></image>
+
+    <view>
+        <view class="session">
+            <view class="sessoin-tit">租金</view>
+            <input class="session-val" type="number" name="currentSalary" bindchange="bindchangeInput" id="currentSalary" />
+        </view>
+        
+        <view class="session">
+            <view class="sessoin-tit">户型</view>
+            <picker  id="houseType" class="session-picker"  bindchange="bindPickerChange" value="{{houseTypeIndex}}" range="{{houseType}}">
+                <view class="picker">
+                  {{houseType[houseTypeIndex]}}
+                </view>
+            </picker>
+        </view>
+
+        <view class="session">
+            <view class="sessoin-tit"  >地标</view>
+            <input class="session-val" name="workPalce"  id="workPalce" bindchange="bindchangeInput"  />
+        </view>
+        
+        <button class="myBtn" bindtap="findHouse">快速速帮我找美房</button>
+
+    </view>
+
+
+   
+  </view>
+ 
+</view>
+
+<!--custom Modal模态窗  选角色-->
+<view class="modal-mask" bindtap="hideModalRole" wx:if="{{showModalRole}}">
+
+  <image class="bomImg" src="{{imgbx.bomImg}}"></image>
+</view>
+<view wx:if="{{showModalRole}}">
+<view class="modal-content">
+ <navigator class="navig"  url="/pages/personal/personal?roleId=1&checkIndex=0">用户</navigator>
+ <navigator class="navig" url="/pages/personal/personal?roleId=2&checkIndex=5">普通管理员</navigator>
+ <navigator class="navig" url="/pages/personal/personal?roleId=3&checkIndex=5">高级管理员</navigator>
+ <navigator class="navig" hover-class="none" url="/pages/personal/personal?roleId=4&checkIndex=10">超级管理员</navigator>
+</view>
+</view>

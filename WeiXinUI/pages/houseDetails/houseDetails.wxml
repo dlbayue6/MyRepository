@@ -1,0 +1,71 @@
+<!--pages/houseDetails/houseDetails.wxml-->
+
+<!--<swiper class='lunbo' indicator-dots='true' autoplay='true' interval='1000'>
+<swiper-item><image src='/images/p1-top.png'></image></swiper-item>
+<swiper-item><image src='/images/p1-tit.png'></image></swiper-item>
+<swiper-item><image src='/images/p1-bom.png'></image></swiper-item>
+</swiper>
+<view >
+<button class='btn1' bindtap='tel' open-type='openSetting'>
+<image class='btnImg' src='../../images/timg.jpg'></image>
+</button>  
+</view>-->
+<swiper class="ws_lineBanenr" indicator-dots="{{banner.indicatorDots}}" autoplay="{{banner.autoplay}}" interval="{{banner.interval}}" duration="{{banner.duration}}">
+	<block wx:for="{{banner.imgUrls}}" wx:key="item.id">
+		<swiper-item>
+			<image src="http://localhost:8113{{item}}" class="slide-image"/>
+		</swiper-item>
+	</block>
+</swiper>
+<view>
+	<view class="ws_lineBox">
+		<view class="ws_lineTitle">
+			<text class="noSpan" bindtap="openMap">{{recommendHouse.HouseLocation}}</text><text class="span" bindtap="openMap">(点击导航)</text>
+			<navigator hover-class="none"  url="/pages/houseList/houseList">更多<image src="https://m.youzhu.com/images/public/icon_more.svg" /></navigator>
+		</view>
+		<view class="ws_lineInfo">
+			<view class="ws_infoRow">
+				<label>地址：</label>
+				<text>{{recommendHouse.House_Address}}</text>
+			</view>
+			<view class="ws_infoRow">
+				<label>联系：</label>
+				<text bindtap="callTel">{{recommendHouse.House_OwnerTel}}</text>
+			</view>
+			<view class="ws_infoRow">
+				<label>租金：</label>
+				<text>{{recommendHouse.House_RentMoney}}</text>
+			</view>
+
+		</view>
+
+		<view class="ws_lineBtnAll">
+			<button bindtap="showMask" data-type="1">预约看房</button>
+			<button bindtap="showMask" data-type="0">我要租房</button>
+		</view>
+
+        <button class='btn1' bindtap='concern' >
+<image class='btnImg' src='../../images/guanzhu.jpg'></image>加入收藏
+</button>
+	</view>
+</view>
+
+<view class="ws_offerMask" wx:if="{{maskShow}}">
+	<view class="ws_offerBox">
+        <view class="ws_offBtnX" bindtap="maskOpen"><image src="https://m.youzhu.com/images/index/offer/icon_off.png" /></view>
+		<view class="ws_maskTitle">
+            <image src="https://m.youzhu.com/images/lineshop/index/title_1.png" wx:if="{{dataType == 1}}" />
+           <!-- <image src="https://m.youzhu.com/images/lineshop/index/title_2.png" wx:if="{{dataType == 0}}" style="width:302rpx;" />-->
+        </view>
+		<view class="ws_maskList">
+			<input type="text" placeholder="您的姓名" wx:if="{{dataType == 1}}" bindinput="changeName" />
+			<input type="tel" placeholder="手机号码" bindinput="changeTel" />
+			<!--<input type="number" placeholder="房屋面积" wx:if="{{dataType == 1}}" bindinput="changeArea" />
+          <button class='btn1' bindtap='callTel' >
+<image class='btnImg' src='../../images/timg.jpg'></image>
+</button> -->
+		</view>
+		<button bindtap="submit">确定</button>
+	</view>
+</view>
+

@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/houseDetails/houseDetails",
+    "pages/houseList/houseList",
+    "pages/personal/personal",
+    "pages/publishHouse/publishHouse"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "乐租北京",
+    "navigationBarTextStyle": "black"
+  }
+}

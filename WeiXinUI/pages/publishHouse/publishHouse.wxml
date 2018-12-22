@@ -1,0 +1,100 @@
+<!--pages/publishHouse/publishHouse.wxml-->
+
+<form bindsubmit="formSubmit" id='2' bindreset="formReset"> 
+  <view class="container2 container2-gray">
+	<view class="group">
+		<view class="group-header">基本信息</view>
+		<view class="group-body">
+			<view class="input-list">
+				<view class="input-item">
+					<text class="input-item-label">地址</text>
+					<view class="input-item-content">
+						<input type="text" placeholder="请输入详细地址" bindchange="adressChange"></input>
+					</view>
+				</view>
+       
+				<view class="input-item">
+					<text class="input-item-label">地段</text>
+					<view class="input-item-content">
+						<input type="text" placeholder="请输入区域位置" bindchange="locationChange"></input>
+					</view>
+				</view>
+        		<view class="input-item">
+					<text class="input-item-label">面积</text>
+					<view class="input-item-content">
+						<input type="text" placeholder="请输入房屋面积" bindchange="areaChange"></input>
+					</view>
+				</view>
+        		<view class="input-item">
+					<text class="input-item-label">设施</text>
+					<view class="input-item-content">
+						<input type="text" placeholder="请输入屋内设施，如：电视，冰箱" bindchange="facilityChange"></input>
+					</view>
+				</view>
+				<view class="input-item">
+					<text class="input-item-label">户型</text>
+					<picker class="input-item-content" bindchange="bindPickerChange" data-pickername="HabitableRoom" value="{{habitableRoomindex}}" range="{{habitableRoom}}" mode="selector">{{habitableRoom[habitableRoomindex]}}
+					</picker>
+				</view>
+				<view class="input-item">
+					<text class="input-item-label">朝向</text>
+					<picker class="input-item-content" bindchange="bindPickerChange" data-pickername="Orientations" value="{{orientationsindex}}" range="{{orientations}}" mode="selector">{{orientations[orientationsindex]}}
+					</picker>
+				</view>
+			<view class="input-item">
+					<text class="input-item-label">租金</text>
+					<view class="input-item-content">
+						<input type="text" placeholder="请输入出租金额" bindchange="rentMoneyChange"></input>
+					</view>
+				</view>
+				<view class="input-item input-item-full">
+				 <text class="input-item-label">内景图</text>
+						<view class="img-upload">
+					<view class="img-add" bindtap="chooseImage" data-type="1"></view>
+					<view class="img-item" bindlongtap="editImage" wx:for="{{uploadimgs}}" wx:key="{{index}}">
+						<icon type="clear" size="20" color="red" style="display:{{editable?'block':'none'}}" bindtap="deleteImg" data-index="{{index}}"/>
+						<image src="{{item}}" mode="aspectFill"></image>
+					</view>
+				</view>
+          <text class="input-item-label">外景图</text>
+					<view class="img-upload">
+					<view class="img-add" bindtap="chooseImage" data-type="2"></view>
+					<view class="img-item" bindtap="editImage">
+						<icon type="clear" size="20" color="red" style="display:{{editable?'block':'none'}}" bindtap="deleteImg" data-index="{{index}}"/>
+						<image src="{{uploadimg}}" mode="aspectFill"></image>
+					</view>
+				</view>
+				</view>
+			</view>
+		</view>
+		<view class="group-header">发布人</view>
+		<view class="group-body">
+			<view class="input-list">
+				<view class="input-item">
+					<text class="input-item-label">姓名</text>
+					<view class="input-item-content">
+						<input type="text" placeholder="请输入姓名" bindchange="nameChange"></input>
+					</view>
+				</view>
+				<view class="input-item">
+					<text class="input-item-label">电话</text>
+					<view class="input-item-content">
+						<input type="text" placeholder="请输入联系电话" bindchange="telChange"></input>
+					</view>
+				</view>
+        	<view class="input-item">
+					<text class="input-item-label">身份证</text>
+					<view class="input-item-content">
+						<input type="text" placeholder="请输入身份证号" bindchange="IDChange"></input>
+					</view>
+				</view>
+			</view>
+		</view>
+
+	 <view class="btn-submit">
+		<button class="btn-block btn-orange" formType="submit">提交</button>
+	 </view>
+  </view>
+  </view>
+
+</form>
