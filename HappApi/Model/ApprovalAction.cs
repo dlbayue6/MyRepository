@@ -42,7 +42,7 @@ namespace Model
         /// 申请数据ID
         /// </summary>
         public int ApplicationId { get; set; }
-         
+         //下次加申请人id
 
     }
 }

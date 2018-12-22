@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IApplicationToper.cs" />
     <Compile Include="IApprovalAction.cs" />
     <Compile Include="IClientInfo.cs" />
     <Compile Include="IConcern.cs" />

@@ -48,6 +48,8 @@ namespace HappApi
             container.RegisterType<IConcern, ConcernDAL>();
             container.RegisterType<IClientInfo, ClientInfoDAL>();
             container.RegisterType<IApprovalAction, ApprovalActionDAL>();
+            container.RegisterType<IApplicationToper, ApplicationToperDAL>();
+       
         }
     }
 }

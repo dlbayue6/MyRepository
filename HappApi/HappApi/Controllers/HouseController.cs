@@ -20,6 +20,8 @@ namespace HappApi.Controllers
         public IHouseDAL houseDAL { get; set; }
         [Dependency]
         public IApprovalAction approvalActionDAL { get; set; }
+        [Dependency]
+        public IApplicationToper applicationToperDAL { get; set; }
         /// <summary>
         /// 发布房源
         /// </summary>
@@ -162,7 +164,7 @@ namespace HappApi.Controllers
                 }
 
                 //初始化审批状态
-                approvalState = stepIds.Length + 1;
+                approvalState = ids.Length + 1;
 
                 ApprovalAction approvalAction = new Model.ApprovalAction();
                 approvalAction.WorkId = workId;
@@ -193,9 +195,10 @@ namespace HappApi.Controllers
             ApprovalAction model = approvalActionDAL.SelectData().Where(m => m.Id == id).FirstOrDefault();
             if (model.ApprovalState != 1)
             {
-                
-                //approvalState--;
 
+                //approvalState--;
+                stepIndex++;
+                stepOrder++;
                 using (SqlConnection conn = DapperHelper.Instance().GetConnection())
                 {
                     //获取节点ids
@@ -208,7 +211,8 @@ namespace HappApi.Controllers
 
                     approvalAction.StepIndex = stepIndex;
                     approvalAction.StepOrder = stepOrder;
-                    approvalAction.ApprovalState = model.ApprovalState-1;
+                    var approvalState = model.ApprovalState - 1;
+                    approvalAction.ApprovalState = approvalState;
                   //判断是否存在下一审批角色
                     if (model.NextApprover != 0)
                     {
@@ -220,7 +224,7 @@ namespace HappApi.Controllers
                         if (stepIdArray.Length >= stepIndex + 2)
                         {
                             var nextstepId = stepIdArray[stepIndex+1]; //获取下一节点id
-                            string sql3 = "RoleId RoleId from Step where Id=" + nextstepId;
+                            string sql3 = "select RoleId from Step where Id=" + nextstepId;
                             nextroleId = conn.Query<int>(sql3).ToArray()[0];
                             approvalAction.NextApprover = nextroleId;
                         }
@@ -233,29 +237,79 @@ namespace HappApi.Controllers
                     }               
                   
                     int i = approvalActionDAL.UpData(approvalAction);
-                    if (i==1)
+
+                    if (approvalState==1)
                     {
-                        //修改房屋审批状态
-                        House hous = houseDAL.SelectData().Where(m => m.Id == model.ApplicationId).FirstOrDefault();
-                        hous.ApprovalState = 1;
-                        int j= houseDAL.UpData(hous);
-                        stepIndex++;
-                        stepOrder++;
+                        if (model.WorkId == 1)
+                        {
+                            //修改房屋审批状态
+                            House hous = houseDAL.SelectData().Where(m => m.Id == model.ApplicationId).FirstOrDefault();
+                            hous.ApprovalState = 1;
+                            int j = houseDAL.UpData(hous);
+                        }
+                        if (model.WorkId == 4)
+                        {
+                            //修改高级管理员审批状态
+                            ApplicationToper applicationToper = applicationToperDAL.SelectData().Where(m => m.Id == model.ApplicationId).FirstOrDefault();
+                            applicationToper.ApprovalState = 1;
+                            int j = applicationToperDAL.UpData(applicationToper);
+                            if (j == 1)
+                            {                            
+                                //把用户角色修改为高级管理员
+                                string sql = string.Format("insert into UserRole values(@UserId,@RoleId)");
+                                var ii = conn.Execute(sql, new { UserId = applicationToper.UserId, RoleId = 3 });
+                            }
+                        }
+                        stepIndex = 0;
+                        stepOrder = 1;
+                        approvalState = 0;
+                        return 1;
                     }
-                  
-                    return i;
+                    return 2;
                 }
             }
             else
             {
-                stepIndex = 0;
-                stepOrder = 1;
-                approvalState = 0;
-                return 2;
+                
+                return 3;
             }
         }
 
-        
+        /// <summary>
+        /// 申请高级管理员
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/House/ApplicationToper")]
+        public int ApplicationToper(string  userId, string userName, string userTel, string manageDescribe)
+        {
+            //应该是审批任务表里加一个申请人id，这里加上业务类型判断审批任务表是否有数据，下面去数据id时，只取降序后第一条,不然，如果失败，申请过就不能再申请
+            ApplicationToper ifModel = applicationToperDAL.SelectData().Where(m => m.UserId == userId).SingleOrDefault();
+            if (ifModel!=null)
+            {
+                return 2;//已申请
+            }
+            else
+            {
+                ApplicationToper model = new Model.ApplicationToper();
+                model.UserId = userId;
+                model.UserName = userName;
+                model.UserTel = userTel;
+                model.ManageDescribe = manageDescribe;
+                int i = applicationToperDAL.AddData(model);
+                if (i == 1)
+                {
+                    ApplicationToper dataModel = applicationToperDAL.SelectData().Where(m => m.UserId == model.UserId).SingleOrDefault();
+                    AddApprovalAction(4,dataModel.Id);
+                    return 1;//提交申请成功
+                }
+                else
+                {
+                    return 0;//提交失败
+                }
+            }
+        }
 
     }
 }
