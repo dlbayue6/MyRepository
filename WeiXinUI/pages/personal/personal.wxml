@@ -75,13 +75,60 @@
 </swiper-item>
 <!-- 申请管理员  -->
  <swiper-item>
- <view class='swiper_con'>这是个关注页面</view>
+			<view class="group-header">申请资料</view>
+			<view class="group-body">
+				<view class="input-list">
+					<view class="input-item">
+						<text class="input-item-label">联系人</text>
+						<view class="input-item-content">
+							<input type="text"  placeholder="请输入您的姓名" bindinput="inputName"></input>
+						</view>
+					</view>
+					<view class="input-item">
+						<text class="input-item-label">手机号码</text>
+						<view class="input-item-content">
+							<input type="idcard" placeholder="请输入您的手机号码" maxlength="11" bindinput="inputPhone"></input>
+						</view>
+					</view>
+				</view>
+			</view>
+	
+		 <view class="btn-submit">
+			<button class="btn-block btn-orange" bindtap="questionSubmit">确认提交</button>
+		 </view>
  </swiper-item>
 
 <!-- 申请高管  -->
  <swiper-item>
- <view class='swiper_con'>这是个关注页面</view>
+			<view class="group-header">申请资料</view>
+			<view class="group-body">
+				<view class="input-list">
+					<view class="input-item">
+						<text class="input-item-label">联系人</text>
+						<view class="input-item-content">
+							<input type="text"  placeholder="请输入您的姓名" bindinput="inputName"></input>
+						</view>
+					</view>
+					<view class="input-item">
+						<text class="input-item-label">手机号码</text>
+						<view class="input-item-content">
+							<input type="idcard" placeholder="请输入您的手机号码" maxlength="11" bindinput="inputPhone"></input>
+						</view>
+					</view>
+          <view class="input-item">
+						<text class="input-item-label">管理描述</text>
+						<view class="input-item-content">
+						<textarea placeholder="请输入对管理的认知描述，可输入1000字" maxlength="1000" bindinput='inputDesribe'></textarea>
+						</view>
+					</view>
+				</view>
+			</view>
+	
+		<view class="btn-submit">
+			<button class="btn-block btn-orange" bindtap="applicationToper">确认提交</button>
+		</view>
  </swiper-item>
+
 
 <!-- 审批房源发布  -->
  <swiper-item>
@@ -89,8 +136,8 @@
 	<view class="ws_listBox" wx:for="{{applicationList}}" wx:key="item.id">
 		<image src="/images/0000.jpg" />
 		<view class="ws_listInfo">
-			<text class="h2">{{item.WorkId}}</text>
-			<text class="p">{{item.NowApprover}}</text>
+			<text class="h2">业务ID:{{item.WorkId}}</text>
+			<text class="p">审批角色：{{item.NowApprover}}</text>
 			<navigator hover-class="none" url="/pages/houseDetails/houseDetails?id={{item.Id}}">查看详情</navigator>
 
       <text class="prompt1" wx:if="{{item.ApprovalState==1}}">已审批</text>
@@ -142,12 +189,54 @@
 </swiper-item>
 <!-- 申请禁/启账号  -->
   <swiper-item>
- <view class='swiper_con'>这是个关注页面</view>
+			<view class="group-header">申请资料</view>
+			<view class="group-body">
+				<view class="input-list">
+					<view class="input-item">
+						<text class="input-item-label">操作类型</text>
+						<view class="input-item-content">
+							<input type="text"  placeholder="请输入禁用或启用" bindinput="inputName"></input>
+						</view>
+					</view>
+					<view class="input-item">
+						<text class="input-item-label">操作理由</text>
+						<view class="input-item-content">
+							<input type="idcard" placeholder="请输入您的手机号码" maxlength="11" bindinput="inputPhone"></input>
+						</view>
+					</view>
+        
+				</view>
+			</view>
+	
+		<view class="btn-submit">
+			<button class="btn-block btn-orange" bindtap="questionSubmit">确认提交</button>
+		</view>
  </swiper-item>
 <!-- 审批管理申请  -->
  <swiper-item>
- <view class='swiper_con'>这是个关注页面</view>
- </swiper-item>
+  <view class="ws_lineList" wx:if="{{applicationList.length > 0}}">
+	<view class="ws_listBox" wx:for="{{applicationList}}" wx:key="item.id">
+		<image src="/images/0000.jpg" />
+		<view class="ws_listInfo">
+			<text class="h2">业务ID:{{item.WorkId}}</text>
+			<text class="p">审批角色：{{item.NowApprover}}</text>
+			<navigator hover-class="none" url="/pages/houseDetails/houseDetails?id={{item.Id}}">查看详情</navigator>
+
+      <text class="prompt1" wx:if="{{item.ApprovalState==1}}">已审批</text>
+      <text class="prompt2" wx:elif="{{item.ApprovalState!=1}}">待审批</text>
+      <text class="prompt2" wx:else>已撤销</text>
+      <button id="{{item.Id}}" class="delbutton" bindtap='approvalAction'>审批</button>
+      
+      <input></input>
+		</view>
+	</view>
+ </view>
+   <view class="listNone" wx:if="{{shopList.length == 0}}">
+    <text>您当前的城市未开通线下体验店</text>
+    <button bindtap="getAll">查看全部体验店</button>
+  </view>
+
+</swiper-item>
 <!-- 管理用户  -->
  <swiper-item>
  <view class='swiper_con'>这是个关注页面</view>
@@ -158,8 +247,29 @@
  </swiper-item>
 <!-- 审批申请  -->
  <swiper-item>
- <view class='swiper_con'>这是个关注页面</view>
- </swiper-item>
- <swiper-item><view class='swiper_con'>这是个关注页面</view></swiper-item>
+  <view class="ws_lineList" wx:if="{{applicationList.length > 0}}">
+	<view class="ws_listBox" wx:for="{{applicationList}}" wx:key="item.id">
+		<image src="/images/0000.jpg" />
+		<view class="ws_listInfo">
+			<text class="h2">业务ID:{{item.WorkId}}</text>
+			<text class="p">审批角色：{{item.NowApprover}}</text>
+			<navigator hover-class="none" url="/pages/houseDetails/houseDetails?id={{item.Id}}">查看详情</navigator>
+
+      <text class="prompt1" wx:if="{{item.ApprovalState==1}}">已审批</text>
+      <text class="prompt2" wx:elif="{{item.ApprovalState!=1}}">待审批</text>
+      <text class="prompt2" wx:else>已撤销</text>
+      <button id="{{item.Id}}" class="delbutton" bindtap='approvalAction'>审批</button>
+      
+      <input></input>
+		</view>
+	</view>
+ </view>
+   <view class="listNone" wx:if="{{shopList.length == 0}}">
+    <text>您当前的城市未开通线下体验店</text>
+    <button bindtap="getAll">查看全部体验店</button>
+  </view>
+
+</swiper-item>
+
 
 </swiper>

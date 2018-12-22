@@ -90,6 +90,71 @@ Page({
       },
     });
   },
+  inputName:function(e)
+  {
+    var val=e.detail.value;
+    this.setData({
+      userName:val
+    })
+  },
+  inputPhone: function (e) {
+    var val = e.detail.value;
+    this.setData({
+      userTel: val
+    })
+  },
+  inputDesribe: function (e) {
+    var val = e.detail.value;
+    this.setData({
+      manageDescribe: val
+    })
+  },
+  applicationToper: function () {
+    var _this = this;
+    wx.request({
+      url: 'http://localhost:8113/api/House/ApplicationToper',
+      method: 'get',
+      data: {
+        UserId: app.globalData.userOpenId,
+        ApplicationTime:"",
+        UserName: _this.data.userName,
+        UserTel: _this.data.userTel,
+        ManageDescribe: _this.data.manageDescribe,
+        ApprovalState:0
+      },
+      header: {
+        'content-type': 'application/json',
+
+      },
+      success: function (res) {
+
+        if (res.data == 1) {
+        
+          wx.showToast({
+
+            title: '提交成功',
+
+            icon: 'success',
+
+            duration: 2000//持续时间，还可用超市函数退出，如下
+
+          })
+        }
+       else if (res.data ==2) {
+
+          wx.showToast({
+
+            title: '已申请，请勿重复',
+
+            icon: 'success',
+
+            duration: 2000//持续时间，还可用超市函数退出，如下
+
+          })
+      }
+      }
+    })/**注意括号，有时不报错 */
+  },
   approvalAction: function (e) {
     var _this = this;
     wx.request({
@@ -115,13 +180,24 @@ Page({
             duration: 2000//持续时间，还可用超市函数退出，如下
 
           })
+        }
+        else {
 
+          wx.showToast({
 
+            title: '进入下一步审批',
+
+            icon: 'success',
+
+            duration: 2000//持续时间，还可用超市函数退出，如下
+
+          })
         }
       }
     })/**注意括号，有时不报错 */
 
   },
+ 
   getApplicationList: function (res) {
     //获取我审批任务列表
     var that = this;
