@@ -131,14 +131,12 @@ namespace HappApi.Controllers
             return "";
         }
 
-        int stepIndex = 0;
-        int stepOrder = 1;
-        int approvalState = 0;
+    
         /// <summary>
         /// 添加审批任务
         /// </summary>
-        /// <param name="workId"></param>
-        /// <param name="dataId"></param>
+        /// <param name="workId"> 业务id</param>
+        /// <param name="dataId">原始数据id</param>
         /// <returns></returns>
         private int AddApprovalAction(int workId, int dataId)
         {
@@ -150,28 +148,27 @@ namespace HappApi.Controllers
       
                 //获取审批角色id
                 var ids = stepIds[0].Split(',');
-                var nowstepId =ids[stepIndex]; //获取节点id
+                var nowstepId =ids[0]; //获取节点id
                 string sql2 = "select RoleId from Step where Id=" + nowstepId;
                 int nowroleId = conn.Query<int>(sql2).ToArray()[0];
 
                 //获取下一审批角色id
                 int nextroleId = 0;
-                if (ids.Length >= stepIndex + 2)
+                if (ids.Length >=  2)
                 {
-                    var nextstepId = ids[stepIndex+1]; //获取下一节点id
+                    var nextstepId = ids[1]; //获取下一节点id
                     string sql3 = "select RoleId from Step where Id=" + nextstepId;
                     nextroleId = conn.Query<int>(sql3).ToArray()[0];
                 }
 
-                //初始化审批状态
-                approvalState = ids.Length + 1;
+              
 
                 ApprovalAction approvalAction = new Model.ApprovalAction();
                 approvalAction.WorkId = workId;
                 approvalAction.StepIds = stepIds[0];
-                approvalAction.StepIndex = stepIndex;
-                approvalAction.StepOrder = stepOrder;
-                approvalAction.ApprovalState = approvalState;
+                approvalAction.StepIndex = 0;
+                approvalAction.StepOrder = 1;
+                approvalAction.ApprovalState = ids.Length + 1;
                 approvalAction.NowApprover = nowroleId;
                 approvalAction.NextApprover = nextroleId;
                 approvalAction.ApplicationId = dataId;
@@ -187,18 +184,14 @@ namespace HappApi.Controllers
         /// <summary>
         /// 进行审批
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">审批活动表id</param>
         /// <returns></returns>
         [HttpGet]
         public int ApprovalAction(int id)
         {
             ApprovalAction model = approvalActionDAL.SelectData().Where(m => m.Id == id).FirstOrDefault();
-            if (model.ApprovalState != 1)
-            {
-
-                //approvalState--;
-                stepIndex++;
-                stepOrder++;
+       
+               
                 using (SqlConnection conn = DapperHelper.Instance().GetConnection())
                 {
                     //获取节点ids
@@ -208,9 +201,12 @@ namespace HappApi.Controllers
                     ApprovalAction approvalAction = new Model.ApprovalAction();
                     approvalAction.Id = id;
 
-
+                    var stepIndex = model.StepIndex + 1;
                     approvalAction.StepIndex = stepIndex;
+
+                    var stepOrder= model.StepOrder + 1;
                     approvalAction.StepOrder = stepOrder;
+
                     var approvalState = model.ApprovalState - 1;
                     approvalAction.ApprovalState = approvalState;
                   //判断是否存在下一审批角色
@@ -221,7 +217,8 @@ namespace HappApi.Controllers
                         approvalAction.NowApprover = nowroleId;
                         //获取下一审批角色id
                         int nextroleId = 0;
-                        if (stepIdArray.Length >= stepIndex + 2)
+                        //判断是否有下一角色
+                        if (stepIdArray.Length >= stepOrder+1)
                         {
                             var nextstepId = stepIdArray[stepIndex+1]; //获取下一节点id
                             string sql3 = "select RoleId from Step where Id=" + nextstepId;
@@ -237,7 +234,7 @@ namespace HappApi.Controllers
                     }               
                   
                     int i = approvalActionDAL.UpData(approvalAction);
-
+                    //判断审批是否最终通过，如通过按不同业务进行相关操作
                     if (approvalState==1)
                     {
                         if (model.WorkId == 1)
@@ -260,19 +257,12 @@ namespace HappApi.Controllers
                                 var ii = conn.Execute(sql, new { UserId = applicationToper.UserId, RoleId = 3 });
                             }
                         }
-                        stepIndex = 0;
-                        stepOrder = 1;
-                        approvalState = 0;
-                        return 1;
+                      
+                        return 1;//审批全部完成
                     }
-                    return 2;
+                    return 2;//当前审批完成，还有后续
                 }
-            }
-            else
-            {
-                
-                return 3;
-            }
+      
         }
 
         /// <summary>
@@ -284,14 +274,19 @@ namespace HappApi.Controllers
         [Route("api/House/ApplicationToper")]
         public int ApplicationToper(string  userId, string userName, string userTel, string manageDescribe)
         {
-            //应该是审批任务表里加一个申请人id，这里加上业务类型判断审批任务表是否有数据，下面去数据id时，只取降序后第一条,不然，如果失败，申请过就不能再申请
-            ApplicationToper ifModel = applicationToperDAL.SelectData().Where(m => m.UserId == userId).SingleOrDefault();
-            if (ifModel!=null)
+            ApplicationToper ifModel = applicationToperDAL.SelectData().Where(m => m.UserId == userId&&m.ApprovalState==1).FirstOrDefault();
+            //测试用户只有一个，暂时不执行
+            if (false)//ifModel!=null
             {
-                return 2;//已申请
+                return 3;//已申请,且通过
             }
             else
             {
+                ApplicationToper ifModel2 = applicationToperDAL.SelectData().Where(m => m.UserId == userId && m.ApprovalState != 1).FirstOrDefault();
+                if (ifModel2 != null)
+                {
+                    return 2;//已申请，勿重复申请
+                }
                 ApplicationToper model = new Model.ApplicationToper();
                 model.UserId = userId;
                 model.UserName = userName;
@@ -300,7 +295,7 @@ namespace HappApi.Controllers
                 int i = applicationToperDAL.AddData(model);
                 if (i == 1)
                 {
-                    ApplicationToper dataModel = applicationToperDAL.SelectData().Where(m => m.UserId == model.UserId).SingleOrDefault();
+                    ApplicationToper dataModel = applicationToperDAL.SelectData().Where(m => m.UserId == userId && m.ApprovalState != 1).FirstOrDefault();
                     AddApprovalAction(4,dataModel.Id);
                     return 1;//提交申请成功
                 }
